@@ -2,7 +2,7 @@ import requests
 import csv
 import os
 
-API_KEY = "1e26cb2bef22aae655fae92858a1b983"
+API_KEY = " Unique API"
 
 
 def get_weather_data(city):
@@ -107,3 +107,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
