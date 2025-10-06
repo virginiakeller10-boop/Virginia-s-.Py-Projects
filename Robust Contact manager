@@ -1,0 +1,126 @@
+import sys
+import os
+
+# Define a custom exception for when a user tries to add an existing contact
+
+
+class DuplicateContactError(Exception):
+    """Raised when an attempt is made to add a contact that already exists."""
+    pass
+
+
+# Global storage for contacts
+contacts = {}
+
+
+def add_contact(name, phone):
+    """
+    Adds a contact. Raises DuplicateContactError if the contact already exists.
+
+    Args:
+        name (str): The name of the contact.
+        phone (str): The phone number.
+    """
+    if name in contacts:
+        raise DuplicateContactError(f"Contact '{name}' already exists.")
+    contacts[name] = phone
+
+
+def find_contact(name):
+    """
+    Finds a contact's phone number. Returns the phone number or None if not found.
+
+    Args:
+        name (str): The name of the contact.
+
+    Returns:
+        str or None: The phone number if found, otherwise None.
+    """
+    try:
+        return contacts[name]
+    except KeyError:
+        return None  # Return None to signal the contact was not found
+
+
+def delete_contact(name):
+    """
+    Deletes a contact. Returns True if deleted, False if contact was not found.
+
+    Args:
+        name (str): The name of the contact to delete.
+
+    Returns:
+        bool: True if deletion was successful, False otherwise.
+    """
+    try:
+        del contacts[name]
+        return True
+    except KeyError:
+        return False  # Return False to signal the contact was not found
+
+
+def main():
+    """Runs the main contact manager application loop."""
+    global contacts
+
+    while True:
+        print("\n--- Contact Manager ---")
+        print("1. Add Contact")
+        print("2. Find Contact")
+        print("3. Delete Contact")
+        print("4. Exit")
+
+        # Input Validation for Menu Choice
+        try:
+            choice_str = input("Enter your choice (1-4): ").strip()
+            # If the input is not a number, the int() conversion will raise ValueError
+            if not choice_str:
+                continue
+            choice = int(choice_str)
+        except ValueError:
+            print("🛑 Invalid input. Please enter a number (1, 2, 3, or 4).")
+            continue
+
+        if choice == 1:
+            name = input("Enter contact name: ").strip()
+            phone = input("Enter phone number: ").strip()
+
+            try:
+                add_contact(name, phone)
+                print(f"✅ Successfully added {name}.")
+            except DuplicateContactError as e:
+                # Catch the custom exception
+                print(f"⚠️ Error: {e}")
+
+        elif choice == 2:
+            name = input("Enter name to find: ").strip()
+            phone = find_contact(name)
+
+            # Handle lookup result
+            if phone:
+                print(f"📞 Phone number for {name}: {phone}")
+            else:
+                print(f"❌ Contact '{name}' not found.")
+
+        elif choice == 3:
+            name = input("Enter name to delete: ").strip()
+
+            # Handle deletion result
+            if delete_contact(name):
+                print(f"🗑️ Successfully deleted {name}.")
+            else:
+                print(f"❌ Cannot delete. Contact '{name}' not found.")
+
+        elif choice == 4:
+            print("👋 Exiting Contact Manager. Goodbye!")
+            break
+
+        else:
+            print("🛑 Invalid choice. Please enter a number from 1 to 4.")
+
+
+if __name__ == "__main__":
+    # The following line is useful for the testing framework to ensure a clean slate
+    # when importing, but the code is primarily run via main()
+    # contacts = {} # Resetting contacts is handled in the test file for safety.
+    main()
